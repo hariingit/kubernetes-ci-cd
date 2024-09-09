@@ -4,7 +4,9 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git'
+                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git',
+                credentialsId: 'Finaceplusid1',
+                branch: 'main'
             }
         }
         stage('Install Dependencies') {
@@ -30,4 +32,3 @@ pipeline {
     }
 
 }
-
