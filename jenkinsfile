@@ -3,8 +3,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git url: 'https://github.com/hariingit/kubernetes-ci-cd', branch: 'main'
-                sh 'docker build -t my-nginx ./docker/Dockerfile'
+                git url: 'https://github.com/hariingit/kubernetes-ci-cd', branch: 'main'                    
+                sh 'docker build -t my-nginx .'
             }
         }
         stage('Deploy to Kubernetes') {
