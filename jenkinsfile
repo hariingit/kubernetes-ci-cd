@@ -9,6 +9,11 @@ pipeline {
                 sh 'docker build -t my-nginx .' // build Docker image
             }
         }
+        stage('Create Service') {
+            steps {
+                sh 'kubectl apply -f service.yaml'
+            }
+        }
         stage('Deploy to Green') {
             steps {
                 sh 'kubectl apply -f green-deployment.yaml'
