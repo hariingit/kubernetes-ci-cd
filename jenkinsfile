@@ -1,8 +1,5 @@
 pipeline {
-    agent {
-        kubernetes {
-        }
-    }
+    agent any
     stages {
         stage('Build') {
             steps {
@@ -11,6 +8,9 @@ pipeline {
             }
         }
         stage('Deploy to Kubernetes') {
+            agent {
+                kubernetes {}
+            }
             steps {
                 kubernetesDeployments(
                     configs: 'deployment.yaml',
