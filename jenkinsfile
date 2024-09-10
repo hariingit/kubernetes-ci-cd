@@ -8,49 +8,11 @@ pipeline {
                 sh 'docker build -t my-app .'
             }
         }
-        stage('Deploy') {
-            steps {
-                kubernetesDeploy(
-                    kubeconfigId: 'my-kubeconfig',
-                    configs: 'deployment.yml',
-                    enableConfigSubstitution: true
-                )
-            }
-        }
-        stage('Blue-Green Deployment') {
-            steps {
-                kubernetesDeploy(
-                    kubeconfigId: 'my-kubeconfig',
-                    configs: 'blue-deployment.yml',
-                    enableConfigSubstitution: true
-                )
-                kubernetesDeploy(
-                    kubeconfigId: 'my-kubeconfig',
-                    configs: 'green-deployment.yml',
-                    enableConfigSubstitution: true
-                )
-            }
-        }
-        stage('Testing') {
-            steps {
-                sh 'kubectl get pods'
-                sh 'kubectl logs -f my-app'
-            }
-        }
-        stage('Traffic Switch') {
-            steps {
-                kubernetesDeploy(
-                    kubeconfigId: 'my-kubeconfig',
-                    configs: 'switch-traffic.yml',
-                    enableConfigSubstitution: true
-                )
-            }
-        }
-        stage('Disaster Recovery') {
-            steps {
-                sh 'kubectl get pods --all-namespaces'
-                sh 'kubectl describe pod my-app'
-            }
-        }
+       
+stage('Deploy') {
+    steps {
+        sh 'kubectl apply -f deployment.yml'
     }
+}
+}
 }
