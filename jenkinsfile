@@ -9,9 +9,36 @@ pipeline {
                 sh 'docker build -t my-nginx .' // build Docker image
             }
         }
-        stage('Deploy') {
+        stage('Deploy to Green') {
             steps {
-                sh 'kubectl apply -f deployment.yaml'
+                sh 'kubectl apply -f green-deployment.yaml'
+            }
+        }
+        stage('Verify Green') {
+            steps {
+                sh 'kubectl get deployments -l environment=green'
+                sh 'kubectl get pods -l environment=green'
+            }
+        }
+        stage('Switch to Green') {
+            steps {
+                sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"green"}}}\''
+            }
+        }
+        stage('Deploy to Blue') {
+            steps {
+                sh 'kubectl apply -f blue-deployment.yaml'
+            }
+        }
+        stage('Verify Blue') {
+            steps {
+                sh 'kubectl get deployments -l environment=blue'
+                sh 'kubectl get pods -l environment=blue'
+            }
+        }
+        stage('Switch to Blue') {
+            steps {
+                sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"blue"}}}\''
             }
         }
     }
