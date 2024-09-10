@@ -1,9 +1,10 @@
 pipeline {
     agent {
         kubernetes {
+            cloud 'kubernetes'
             namespace 'default'
-        }
     }
+}
     stages {
         stage('Build') {
             steps {
