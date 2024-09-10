@@ -4,7 +4,7 @@ pipeline {
         stage('Deploy to Green') {
             steps {
                 // Deploy to green environment
-                sh 'kubectl apply -f green-deployment.yaml'
+                sh 'kubectl apply -f Disaster-Recovery/green-deployment.yaml'
             }
         }
         stage('Switch Traffic to Green') {
