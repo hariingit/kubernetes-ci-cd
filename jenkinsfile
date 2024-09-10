@@ -1,25 +1,9 @@
 pipeline {
     agent any
-
     stages {
         stage('Build') {
             steps {
-                git {
-                    url 'https://github.com/hariingit/kubernetes-ci-cd.git'
-                    branch 'main'
-                }
-                sh 'docker build -t my-app .'
+                git 'https://github.com/your-username/your-repo-name.git'
+                sh 'docker build -t my-nginx .'
             }
         }
-        stage('Deploy') {
-            steps {
-                sh 'kubectl apply -f deployment.yml'
-            }
-        }
-    }
-    post {
-        failure {
-            echo 'Pipeline failed. Please check the repository and branch configuration.'
-        }
-    }
-}
