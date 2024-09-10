@@ -1,7 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            context "${minikubeContext()}"
+            cloud "${minikubeCloud()}"
             namespace 'default'
         }
     }
@@ -25,6 +25,10 @@ pipeline {
             }
         }
     }
+}
+
+def minikubeCloud() {
+    return 'minikube' // or your cloud name
 }
 
 def minikubeContext() {
