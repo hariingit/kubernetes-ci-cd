@@ -6,6 +6,7 @@ pipeline {
                 git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main'
                 sh 'printenv' // print environment variables
                 sh 'git log -1' // print latest commit
+                sh 'docker build -t my-nginx .' // build Docker image
             }
         }
     }
