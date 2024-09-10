@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            context "${minikubeContext()}"
+            namespace 'default'
+        }
+    }
     stages {
         stage('Build') {
             steps {
@@ -8,15 +13,21 @@ pipeline {
             }
         }
         stage('Deploy to Kubernetes') {
-            agent {
-                kubernetes {}
-            }
             steps {
                 kubernetesDeployments(
                     configs: 'deployment.yaml',
-                    enableConfigSubstitution: true
+                    enableConfigSubstitution: true,
+                    strategy: 'Recreate',
+                    prune: true,
+                    wait: true,
+                    timeout: 5
                 )
             }
         }
     }
+}
+
+def minikubeContext() {
+    def context = sh(returnStdout: true, script: 'minikube kubectl config current-context')
+    return context.trim()
 }
