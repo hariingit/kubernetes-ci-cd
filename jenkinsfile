@@ -4,7 +4,7 @@ pipeline {
         stage('Build') {
             steps {
                 git url: 'https://github.com/hariingit/kubernetes-ci-cd', branch: 'main'
-                sh 'docker build -t my-nginx .'
+		sh 'sudo docker build -t my-nginx ./docker/Dockerfile'
             }
         }
         stage('Deploy to Kubernetes') {
