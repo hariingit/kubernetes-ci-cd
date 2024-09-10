@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                kubernetesDeploy(
+                kubernetesDeployments(
                     configs: 'deployment.yaml',
                     enableConfigSubstitution: true
                 )
