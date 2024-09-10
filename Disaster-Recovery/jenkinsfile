@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    stages {
+        stage('Deploy to Green') {
+            steps {
+                // Deploy to green environment
+                sh 'kubectl apply -f green-deployment.yaml'
+            }
+        }
+        stage('Switch Traffic to Green') {
+            steps {
+                // Update ingress resource to point to green service
+                sh 'kubectl patch ingress/my-app-ingress -p \'{"spec":{"rules":[{"host":"my-app.example.com","http":{"paths":[{"path":"/","backend":{"service":{"name":"green-service","port":80}}}]}}]}}\''
+            }
+        }
+        stage('Verify Green') {
+            steps {
+                // Verify green environment is working correctly
+                sh 'kubectl get deployments -l environment=green'
+            }
+        }
+        stage('Rollback to Blue') {
+            steps {
+                // Update ingress resource to point to blue service
+                sh 'kubectl patch ingress/my-app-ingress -p \'{"spec":{"rules":[{"host":"my-app.example.com","http":{"paths":[{"path":"/","backend":{"service":{"name":"blue-service","port":80}}}]}}]}}\''
+            }
+        }
+    }
+}
