@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        kubernetes {
-            cloud 'kubernetes'
-            namespace 'default'
-    }
-}
+    agent any
     stages {
         stage('Build') {
             steps {
@@ -25,13 +20,4 @@ pipeline {
             }
         }
     }
-}
-
-def minikubeCloud() {
-    return 'minikube' // or your cloud name
-}
-
-def minikubeContext() {
-    def context = sh(returnStdout: true, script: 'minikube kubectl config current-context')
-    return context.trim()
 }
