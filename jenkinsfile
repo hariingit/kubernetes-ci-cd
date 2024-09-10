@@ -3,13 +3,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git'
-                sh 'docker build -t my-nginx .'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                sh 'kubectl apply -f deployment.yml'
+                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main'
+                sh 'printenv' // print environment variables
+                sh 'git log -1' // print latest commit
             }
         }
     }
