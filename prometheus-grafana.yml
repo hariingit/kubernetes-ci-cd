@@ -1,0 +1,55 @@
+---
+- name: Install Prometheus and Grafana
+  hosts: localhost
+  become: true
+
+  tasks:
+  - name: Install Prometheus
+    apt:
+      name: prometheus
+      state: present
+
+  - name: Start Prometheus
+    service:
+      name: prometheus
+      state: started
+      enabled: yes
+  - name: Install software-properties-common
+    apt:
+      name: software-properties-common
+      state: present
+
+  - name: Add Grafana repository key
+    shell: wget -q -O - https://packages.grafana.com/gpg.key | apt-key add -
+
+  - name: Add Grafana repository
+    shell: add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+
+  - name: Update package list
+    apt:
+      update_cache: yes
+
+  - name: Install Grafana
+    apt:
+      name: grafana
+      state: present
+  - name: Configure Prometheus data source in Grafana
+    template:
+      src: templates/prometheus-datasource.json.j2
+      dest: /etc/grafana/provisioning/datasources/prometheus-datasource.json
+    notify: restart grafana
+
+  handlers:
+  - name: restart grafana
+    service:
+      name: grafana-server
+      state: restarted
+
+  - name: Add scrape target to Prometheus
+    blockinfile:
+      path: /etc/prometheus/prometheus.yml
+      block: |
+       scrape_configs:
+         - job_name: 'my_service'
+            static_configs:
+              - targets: ['34.172.245.195:8080']

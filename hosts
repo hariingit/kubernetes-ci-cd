@@ -1,0 +1,5 @@
+[monitoring_server]
+localhost ansible_connection=local
+
+[jenkins_server]
+localhost ansible_connection=local
