@@ -1,5 +1,3 @@
-Here is the full code with the parameterized branch name:
-Groovy
 pipeline {
     agent any
     parameters {
@@ -58,4 +56,3 @@ pipeline {
         }
     }
 }
-Now, when triggering the pipeline, you can pass the desired branch name as a parameter, and the pipeline will use that branch instead of the default main branch.
