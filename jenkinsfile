@@ -2,6 +2,14 @@
 pipeline {
     agent any
     stages {
+            stage('Push changes') {
+            steps {
+                script {
+                    sh 'git push origin HEAD'
+                      }
+                  }
+                }
+              
         stage('Build') {
             steps {
                 git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main'
@@ -15,14 +23,7 @@ pipeline {
                 sh 'kubectl apply -f service.yaml'
             }
         }
-        stage('Push changes') {
-            steps {
-                script {
-                    sh 'git push origin main'
-        }
-    }
-}
-        stage('Deploy to Green') {
+          stage('Deploy to Green') {
             steps {
                 sh 'kubectl apply -f green-deployment.yaml'
             }
