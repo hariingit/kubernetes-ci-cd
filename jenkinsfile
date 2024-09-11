@@ -1,69 +1,51 @@
-def retryPipeline(int retryCount) {
-    try {
-        pipeline {
-            agent any
 
-            stages {
-                stage('Checkout') {
-                    steps {
-                        git url: 'git@github.com/hariingit/kubernetes-ci-cd.git',
-                           credentialsId: 'github-ssh-key',
-                           branch: 'main'
-                    }
-                }
-                stage('Build') {
-                    steps {
-                        sh 'printenv'
-                        sh 'git log -1'
-                        sh 'docker build -t my-nginx .'
-                    }
-                }
-                stage('Create Service') {
-                    steps {
-                        sh 'kubectl apply -f service.yaml'
-                    }
-                }
-                stage('Deploy to Green') {
-                    steps {
-                        sh 'kubectl apply -f green-deployment.yaml'
-                    }
-                }
-                stage('Verify Green') {
-                    steps {
-                        sh 'kubectl get deployments -l environment=green'
-                        sh 'kubectl get pods -l environment=green'
-                    }
-                }
-                stage('Switch to Green') {
-                    steps {
-                        sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"green"}}}\''
-                    }
-                }
-                stage('Deploy to Blue') {
-                    steps {
-                        sh 'kubectl apply -f blue-deployment.yaml'
-                    }
-                }
-                stage('Verify Blue') {
-                    steps {
-                        sh 'kubectl get deployments -l environment=blue'
-                        sh 'kubectl get pods -l environment=blue'
-                    }
-                }
-                stage('Switch to Blue') {
-                    steps {
-                        sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"blue"}}}\''
-                    }
-                }
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main'
+                sh 'printenv' // print environment variables
+                sh 'git log -1' // print latest commit
+                sh 'docker build -t my-nginx .' // build Docker image
             }
         }
-    } catch (Exception e) {
-        if (retryCount > 0) {
-            retryPipeline(retryCount - 1)
-        } else {
-            throw e
+        stage('Create Service') {
+            steps {
+                sh 'kubectl apply -f service.yaml'
+            }
+        }
+        stage('Deploy to Green') {
+            steps {
+                sh 'kubectl apply -f green-deployment.yaml'
+            }
+        }
+        stage('Verify Green') {
+            steps {
+                sh 'kubectl get deployments -l environment=green'
+                sh 'kubectl get pods -l environment=green'
+            }
+        }
+        stage('Switch to Green') {
+            steps {
+                sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"green"}}}\''
+            }
+        }
+        stage('Deploy to Blue') {
+            steps {
+                sh 'kubectl apply -f blue-deployment.yaml'
+            }
+        }
+        stage('Verify Blue') {
+            steps {
+                sh 'kubectl get deployments -l environment=blue'
+                sh 'kubectl get pods -l environment=blue'
+            }
+        }
+        stage('Switch to Blue') {
+            steps {
+                sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"blue"}}}\''
+            }
         }
     }
 }
-
-retryPipeline(5)
