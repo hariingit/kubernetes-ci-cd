@@ -52,4 +52,18 @@ def retryPipeline(int retryCount) {
                 }
                 stage('Switch to Blue') {
                     steps {
-                        sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"blue
+                        sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"blue"}}}\''
+                    }
+                }
+            }
+        }
+    } catch (Exception e) {
+        if (retryCount > 0) {
+            retryPipeline(retryCount - 1)
+        } else {
+            throw e
+        }
+    }
+}
+
+retryPipeline(5)
