@@ -1,18 +1,14 @@
-
 pipeline {
     agent any
+    triggers {
+        githubPush()
+    }
     stages {
-            stage('Push changes') {
-            steps {
-                script {
-                    sh 'git push origin HEAD'
-                      }
-                  }
-                }
-              
         stage('Build') {
             steps {
-                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main'
+                withCredentials([usernamePassword(credentialsId: '3e999b94-ef75-42a5-8abf-b621561cb8be', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main', credentialsId: '3e999b94-ef75-42a5-8abf-b621561cb8be'
+                }
                 sh 'printenv' // print environment variables
                 sh 'git log -1' // print latest commit
                 sh 'docker build -t my-nginx .' // build Docker image
@@ -23,7 +19,7 @@ pipeline {
                 sh 'kubectl apply -f service.yaml'
             }
         }
-          stage('Deploy to Green') {
+        stage('Deploy to Green') {
             steps {
                 sh 'kubectl apply -f green-deployment.yaml'
             }
