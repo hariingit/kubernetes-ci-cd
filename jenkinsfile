@@ -1,7 +1,7 @@
 def retryPipeline(int retryCount) {
     try {
         pipeline {
-            agent any
+            agent none
 
             stages {
                 stage('Checkout') {
