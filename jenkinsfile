@@ -1,14 +1,16 @@
 pipeline {
     agent any
 
-    environment {
-        GITHUB_CREDENTIALS = credentials('3e999b94-ef75-42a5-8abf-b621561cb8be')
-    }
-
     stages {
+        stage('Checkout') {
+            steps {
+                git url: 'git@github.com:hariingit/kubernetes-ci-cd.git',
+                   credentialsId: 'github-ssh-key',
+                   branch: 'main'
+            }
+        }
         stage('Build') {
             steps {
-                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git'
                 sh 'printenv'
                 sh 'git log -1'
                 sh 'docker build -t my-nginx .'
