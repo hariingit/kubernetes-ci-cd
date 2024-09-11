@@ -2,21 +2,16 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_CREDENTIALS = credentials('github-credentials')
+        GITHUB_CREDENTIALS = credentials('3e999b94-ef75-42a5-8abf-b621561cb8be')
     }
 
-    // Existing code from your original Jenkinsfile (e.g., checkout stage)
-
     stages {
-        // Stages from the provided code snippet
         stage('Build') {
             steps {
-                git branch: 'main',
-                   credentialsId: env.GITHUB_CREDENTIALS,
-                   url: 'https://github.com/hariingit/kubernetes-ci-cd.git'
-                sh 'printenv' // print environment variables
-                sh 'git log -1' // print latest commit
-                sh 'docker build -t my-nginx .' // build Docker image
+                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git'
+                sh 'printenv'
+                sh 'git log -1'
+                sh 'docker build -t my-nginx .'
             }
         }
         stage('Create Service') {
