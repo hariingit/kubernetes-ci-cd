@@ -1,9 +1,6 @@
 
 pipeline {
     agent any
-    triggers {
-        githubPush(branch: 'main')
-    }
     stages {
         stage('Build') {
             steps {
@@ -18,6 +15,13 @@ pipeline {
                 sh 'kubectl apply -f service.yaml'
             }
         }
+        stage('Push changes') {
+            steps {
+                script {
+                    sh 'git push origin master'
+        }
+    }
+}
         stage('Deploy to Green') {
             steps {
                 sh 'kubectl apply -f green-deployment.yaml'
