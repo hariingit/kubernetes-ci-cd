@@ -1,6 +1,9 @@
 
 pipeline {
     agent any
+    triggers {
+        git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main'
+    }
     stages {
         stage('Build') {
             steps {
