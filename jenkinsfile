@@ -1,5 +1,10 @@
+Here is the full code with the parameterized branch name:
+Groovy
 pipeline {
     agent any
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main')
+    }
     triggers {
         githubPush()
     }
@@ -7,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 withCredentials([usernamePassword(credentialsId: '3e999b94-ef75-42a5-8abf-b621561cb8be', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                    git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main', credentialsId: '3e999b94-ef75-42a5-8abf-b621561cb8be'
+                    git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: "${params.BRANCH_NAME}", credentialsId: '3e999b94-ef75-42a5-8abf-b621561cb8be'
                 }
                 sh 'printenv' // print environment variables
                 sh 'git log -1' // print latest commit
@@ -53,3 +58,4 @@ pipeline {
         }
     }
 }
+Now, when triggering the pipeline, you can pass the desired branch name as a parameter, and the pipeline will use that branch instead of the default main branch.
