@@ -1,50 +1,62 @@
 pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                git url: 'https://github.com/hariingit/kubernetes-ci-cd.git', branch: 'main'
-                sh 'printenv' // print environment variables
-                sh 'git log -1' // print latest commit
-                sh 'docker build -t my-nginx .' // build Docker image
-            }
-        }
-        stage('Create Service') {
-            steps {
-                sh 'kubectl apply -f service.yaml'
-            }
-        }
-        stage('Deploy to Green') {
-            steps {
-                sh 'kubectl apply -f green-deployment.yaml'
-            }
-        }
-        stage('Verify Green') {
-            steps {
-                sh 'kubectl get deployments -l environment=green'
-                sh 'kubectl get pods -l environment=green'
-            }
-        }
-        stage('Switch to Green') {
-            steps {
-                sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"green"}}}\''
-            }
-        }
-        stage('Deploy to Blue') {
-            steps {
-                sh 'kubectl apply -f blue-deployment.yaml'
-            }
-        }
-        stage('Verify Blue') {
-            steps {
-                sh 'kubectl get deployments -l environment=blue'
-                sh 'kubectl get pods -l environment=blue'
-            }
-        }
-        stage('Switch to Blue') {
-            steps {
-                sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"blue"}}}\''
-            }
-        }
+  agent any
+  stages {
+    stage('Trigger') {
+      when {
+        branch 'main' // Change 'main' to your branch name if different
+        branch '**' // Trigger on all branches (optional)
+        changeRequest comparator: 'OLDER'
+      }
+      steps {
+        echo 'Triggered by a Git commit!'
+        // Consider removing or modifying the checkout command based on your workflow
+        // sh 'git checkout main'
+      }
     }
-}
+    stage('Build') {
+      steps {
+        // Redundant branch specification removed
+        git url: 'https://github.com/hariingit/kubernetes-ci-cd.git'
+        sh 'printenv | grep GIT_' // Filter environment variables (optional)
+        sh 'git log -1' // Print latest commit
+        sh 'docker build -t my-nginx .' // Build Docker image
+      }
+    }
+    stage('Create Service') {
+      steps {
+        sh 'kubectl apply -f service.yaml'
+      }
+    }
+    stage('Deploy to Green') {
+      steps {
+        sh 'kubectl apply -f green-deployment.yaml'
+      }
+    }
+    stage('Verify Green') {
+      steps {
+        sh 'kubectl get deployments -l environment=green'
+        sh 'kubectl get pods -l environment=green'
+      }
+    }
+    stage('Switch to Green') {
+      steps {
+        sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"green"}}}\''
+      }
+    }
+    stage('Deploy to Blue') {
+      steps {
+        sh 'kubectl apply -f blue-deployment.yaml'
+      }
+    }
+    stage('Verify Blue') {
+      steps {
+        sh 'kubectl get deployments -l environment=blue'
+        sh 'kubectl get pods -l environment=blue'
+      }
+    }
+    stage('Switch to Blue') {
+      steps {
+        sh 'kubectl patch svc/my-nginx -p \'{"spec":{"selector":{"environment":"blue"}}}\''
+      }
+    }
+  }
