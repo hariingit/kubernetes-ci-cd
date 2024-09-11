@@ -18,7 +18,7 @@ pipeline {
         stage('Push changes') {
             steps {
                 script {
-                    sh 'git push origin master'
+                    sh 'git push origin main'
         }
     }
 }
