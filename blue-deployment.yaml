@@ -5,7 +5,7 @@ metadata:
   labels:
     environment: blue
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       environment: blue
