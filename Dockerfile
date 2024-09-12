@@ -1,2 +1,2 @@
-FROM nginx:stable-alpine-slim
+FROM nginx:latest
 COPY index.html /usr/share/nginx/html
